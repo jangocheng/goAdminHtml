@@ -3,10 +3,10 @@ module.exports = {
   env: {
     node: true
   },
-  'extends': [
-    'plugin:vue/strongly-recommended',
-    '@vue/standard'
-  ],
+  // 'extends': [
+  //   'plugin:vue/strongly-recommended',
+  //   '@vue/standard'
+  // ],
   rules: {
     'no-console': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

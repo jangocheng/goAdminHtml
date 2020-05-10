@@ -1,43 +1,15 @@
 <template>
   <a-layout :class="['layout', device]">
     <!-- SideMenu -->
-    <a-drawer
-      v-if="isMobile()"
-      placement="left"
-      :wrapClassName="`drawer-sider ${navTheme}`"
-      :closable="false"
-      :visible="collapsed"
-      @close="drawerClose"
-    >
-      <side-menu
-        mode="inline"
-        :menus="menus"
-        :theme="navTheme"
-        :collapsed="false"
-        :collapsible="true"
-        @menuSelect="menuSelect"
-      ></side-menu>
+    <a-drawer v-if="isMobile()" placement="left" :wrapClassName="`drawer-sider ${navTheme}`" :closable="false" :visible="collapsed" @close="drawerClose">
+      <side-menu mode="inline" :menus="menus" :theme="navTheme" :collapsed="false" :collapsible="true" @menuSelect="menuSelect"></side-menu>
     </a-drawer>
 
-    <side-menu
-      v-else-if="isSideMenu()"
-      mode="inline"
-      :menus="menus"
-      :theme="navTheme"
-      :collapsed="collapsed"
-      :collapsible="true"
-    ></side-menu>
+    <side-menu v-else-if="isSideMenu()" mode="inline" :menus="menus" :theme="navTheme" :collapsed="collapsed" :collapsible="true"></side-menu>
 
     <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
       <!-- layout header -->
-      <global-header
-        :mode="layoutMode"
-        :menus="menus"
-        :theme="navTheme"
-        :collapsed="collapsed"
-        :device="device"
-        @toggle="toggle"
-      />
+      <global-header :mode="layoutMode" :menus="menus" :theme="navTheme" :collapsed="collapsed" :device="device" @toggle="toggle" />
 
       <!-- layout content -->
       <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }">
@@ -71,6 +43,7 @@ import GlobalHeader from '@/components/GlobalHeader'
 import GlobalFooter from '@/components/GlobalFooter'
 import SettingDrawer from '@/components/SettingDrawer'
 import { convertRoutes } from '@/utils/routeConvert'
+import { asyncRouterMap } from '@/config/router.config.js'
 
 export default {
   name: 'BasicLayout',
@@ -110,8 +83,12 @@ export default {
     }
   },
   created () {
-    const routes = convertRoutes(this.mainMenu.find(item => item.path === '/'))
-    this.menus = (routes && routes.children) || []
+    // const routes = convertRoutes(this.mainMenu.find(item => item.path === '/'))
+    // this.menus = (routes && routes.children) || []
+    // this.collapsed = !this.sidebarOpened
+
+    this.menus = asyncRouterMap.find((item) => item.path === '/').children
+    // this.menus = this.mainMenu.find((item) => item.path === '/').children
     this.collapsed = !this.sidebarOpened
   },
   mounted () {

@@ -8,16 +8,30 @@ import notification from 'ant-design-vue/es/notification'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
+import { constantRouterMap, asyncRouterMap } from '@/config/router.config'
+
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
 const defaultRoutePath = '/dashboard/workplace'
 
+constantRouterMap.concat(asyncRouterMap)
+router.addRoutes(asyncRouterMap)
+store.dispatch('GenerateRoutes', { constantRouterMap })
+
+
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
-  to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`))
-  if (Vue.ls.get(ACCESS_TOKEN)) {
+  to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`)
+  next()
+  NProgress.done()
+  console.log("next")
+  return
+  if (!Vue.ls.get(ACCESS_TOKEN)) {
     /* has token */
+    next(defaultRoutePath)
+    NProgress.done()
+    /*
     if (to.path === '/user/login') {
       next({ path: defaultRoutePath })
       NProgress.done()
@@ -55,6 +69,7 @@ router.beforeEach((to, from, next) => {
         next()
       }
     }
+    */
   } else {
     if (whiteList.includes(to.name)) {
       // 在免登录白名单，直接进入
@@ -65,6 +80,7 @@ router.beforeEach((to, from, next) => {
     }
   }
 })
+
 
 router.afterEach(() => {
   NProgress.done() // finish progress bar

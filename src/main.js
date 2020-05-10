@@ -1,7 +1,8 @@
 // with polyfills
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
-
+// vue/dist/vue.min.js
+// import Vue from "vue/dist/vue.min.js"
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -10,11 +11,11 @@ import { VueAxios } from './utils/request'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
-import './mock'
+// import './mock'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
-import './permission' // permission control
+// import './permission' // permission control
 import './utils/filter' // global filter
 import './components/global.less'
 import { Dialog } from '@/components'
