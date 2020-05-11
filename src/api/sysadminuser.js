@@ -36,3 +36,12 @@ export function deleteAdminUser (id, form) {
     method: 'delete',
   })
 }
+
+//修改密码
+export function putPwd(id,form){
+  return axios({
+    url:api.sysAdminUser+"/"+id+"/password",
+    method:'put',
+    data:form,
+  })
+}

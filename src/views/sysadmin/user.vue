@@ -1,6 +1,27 @@
 <template>
   <div>
+    <!-- 修改密码 -->
+    <a-modal v-model="showPwd" title="修改密码">
+      <template slot="footer">
+        <div style="padding:10px 0">
+          <a-button key="back" @click="showPwd=false">取消</a-button>
+          <a-button key="submit" type="primary" :loading="loadPwd" @click="onUpdatePwd(formPwd.id)">确定修改密码</a-button>
+        </div>
 
+      </template>
+      <a-form :form="formPwd">
+        <a-form-item label="原始密码" :colon="true" :labelCol="{span:5}" :wrapperCol="{span:18}" required>
+          <a-input v-model='formPwd.old'></a-input>
+        </a-form-item>
+        <a-form-item label="新密码" :colon="true" :labelCol="{span:5}" :wrapperCol="{span:18}" required>
+          <a-input v-model='formPwd.pwd'></a-input>
+        </a-form-item>
+        <a-form-item label="重复新密码" :colon="true" :labelCol="{span:5}" :wrapperCol="{span:18}" required>
+          <a-input v-model='formPwd.pwd2'></a-input>
+        </a-form-item>
+      </a-form>
+    </a-modal>
+    <!-- 新建 修改 -->
     <a-modal :title="isCreate?'新建管理员':'更新管理员'" :width="640" :visible="showSysUser" :okText="isCreate?'创建':'更新'" :confirmLoading="userLoading" @ok="()=>{isCreate?onCreateSysUser():onUpdateSysUser()}" @cancel="onCancelSysUser">
       <a-spin :spinning="userLoading">
         <a-form :form="sysUser" :labelCol="{span:4}" :wrapperCol="{span:18}">
@@ -77,7 +98,7 @@
   </div>
 </template>
 <script>
-import { queryAdminUser, createAdminUser, updateAdminUser, deleteAdminUser } from '@/api/sysadminuser'
+import { queryAdminUser, createAdminUser, updateAdminUser, deleteAdminUser, putPwd } from '@/api/sysadminuser'
 export default {
   name: 'Sysadminuser',
   data () {
@@ -85,8 +106,10 @@ export default {
     return {
       showSysUser: false,
       userLoading: false,
+      loadPwd: false,
       queryLoading: false,
       isCreate: true,
+      showPwd: false,
       queryParam: { account: '', phone: '' },
       columns: [
         {
@@ -138,7 +161,10 @@ export default {
 
       //用户
       sysUser: {},
-      sysUserStatus: {}
+      sysUserStatus: {},
+
+      //密码
+      formPwd: {},
 
     }
   },
@@ -161,6 +187,14 @@ export default {
         password: '',
       }
     },
+    initPwd () {
+      this.formPwd = {
+        id: '',
+        old: "",
+        pwd: "",
+        pwd2: '',
+      }
+    },
     // handler
     queryUser () {
       this.queryLoading = true
@@ -171,7 +205,7 @@ export default {
           this.page.total = res.result.page.count
           this.page.pageSize = res.result.page.limit
         } else {
-          console.log(res)
+          // console.log(res)
           Object.values(res.result).forEach(v => {
             this.$message.error(v);
           })
@@ -243,7 +277,44 @@ export default {
         },
       });
     },
-    onPassword (recode) { },
+    onPassword (recode) {
+      this.initPwd()
+      this.formPwd.id = recode.id
+      this.showPwd = true
+    },
+    onUpdatePwd (id) {
+      if (this.formPwd.pwd != this.formPwd.pwd2) {
+        this.$error({
+          title: '两次输入新密码不一致',
+        });
+        return
+      }
+      this.loadPwd = true
+      putPwd(id, this.formPwd).then(res => {
+        this.loadPwd = false
+        if (res.code == 200) {
+          this.$success({
+            title: res.message,
+            onOk: () => {
+              this.showPwd = false
+            }
+          })
+        } else {
+          if (res.result.err) {
+            this.$error({ title: res.result.err })
+          } else {
+            var html = ''
+            Object.values(res.result).forEach(d => {
+              html = html + '<div>' + d[1] + '</div>  '
+            })
+            this.$error({ title: "错误", content: html })
+          }
+        }
+      })
+
+
+
+    },
     //创建用户
     onCreateSysUser () {
       this.Loading = true
