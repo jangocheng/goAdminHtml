@@ -89,6 +89,8 @@
             <a @click="onDelete(record)">删除</a>
             <a-divider type="vertical" />
             <a @click="onPassword(record)">修改密码</a>
+            <a-divider type="vertical" />
+            <a @click="onResetPassword(record)">重置密码</a>
           </template>
         </span>
 
@@ -98,7 +100,7 @@
   </div>
 </template>
 <script>
-import { queryAdminUser, createAdminUser, updateAdminUser, deleteAdminUser, putPwd } from '@/api/sysadminuser'
+import { queryAdminUser, createAdminUser, updateAdminUser, deleteAdminUser, putPwd, postRestPassword } from '@/api/sysadminuser'
 export default {
   name: 'Sysadminuser',
   data () {
@@ -140,7 +142,7 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
-          width: '200px',
+          width: '260px',
           align: 'center',
           scopedSlots: { customRender: 'action' }
         }
@@ -199,19 +201,19 @@ export default {
     queryUser () {
       this.queryLoading = true
       queryAdminUser(this.queryParam, { page: this.page.currend, limit: this.page.pageSize }).then(res => {
-        console.log(res,"sysadminuser")
+        console.log(res, "sysadminuser")
         if (res.code == 200) {
           this.adminUser = res.result.data
           this.page.currend = res.result.page.page
           this.page.total = res.result.page.count
           this.page.pageSize = res.result.page.limit
-        }else if(res.message){
+        } else if (res.message) {
           this.$message.error(res.message)
         }
 
       }).catch(err => {
         // console.log(err)
-        this.$message.error((err.response && err.response.data) ||err.message )
+        this.$message.error((err.response && err.response.data) || err.message)
       }).finally(() => { this.queryLoading = false })
     },
 
@@ -276,6 +278,33 @@ export default {
       this.initPwd()
       this.formPwd.id = recode.id
       this.showPwd = true
+    },
+    onResetPassword (recode) {
+      this.$confirm({
+        title: '确定重置 [ ' + recode.name + ' ] 的密码么？此操作不可恢复！',
+        // content: h => <div style="color:red;">Some descriptions</div>,
+        onOk: ()=> {
+          console.log("click")
+          var self = this
+          return postRestPassword(recode.id).then((res) => {
+            console.log(this)
+            if (res.code == 200) {
+              this.$success({
+                title: '密码重置成功',
+                // JSX support
+                content: "新密码:"+res.result.data+"  注意:此密码只显示一次",
+              });
+            } else {
+              this.$message(res.message || (res.result && res.result.data))
+            }
+          }).catch(err => {
+            this.$message(res.response && res.response.data || res.message)
+          })
+        },
+        onCancel () {
+        },
+        // class: 'test',
+      });
     },
     onUpdatePwd (id) {
       if (this.formPwd.pwd != this.formPwd.pwd2) {

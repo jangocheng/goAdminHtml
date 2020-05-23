@@ -48,7 +48,7 @@ export function getCurrentUserNav (token) {
 
 export function logout () {
   return axios({
-    url: api.logout,
+    url: api.Logout,
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'

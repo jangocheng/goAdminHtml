@@ -45,3 +45,12 @@ export function putPwd(id,form){
     data:form,
   })
 }
+
+//重置密码
+export function postRestPassword(id){
+  return axios({
+    url:api.sysAdminUser+"/"+id+"/resetpassword",
+    method:"post",
+    data:{},
+  })
+}

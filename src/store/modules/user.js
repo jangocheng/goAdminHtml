@@ -89,9 +89,9 @@ const user = {
     // 登出
     Logout ({ commit, state }) {
       return new Promise((resolve) => {
-        logout().then(() => {
+        logout().then((response) => {
           resolve()
-        }).catch(() => {
+        }).catch((err) => {
           resolve()
         }).finally(() => {
           commit('SET_TOKEN', '')
