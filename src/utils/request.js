@@ -42,16 +42,61 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {
-    config.headers['Access-Token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+    config.headers['token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
   }
-  if(!config.data){
+  if (!config.data) {
     config.data = JSON.stringify(config.data)
   }
   return config
 }, err)
 
-// response interceptor
+// response interceptor 相应拦截器
 service.interceptors.response.use((response) => {
+  var token = response.headers["token"]
+  if (token != undefined) {
+    Vue.ls.set(ACCESS_TOKEN, token)
+    store.commit('SET_TOKEN', token)
+  }
+  // const token = Vue.ls.get(ACCESS_TOKEN)
+  if (response.data && response.data.code === 403) {
+    notification.error({
+      message: '未授权',
+      description: data.message
+    })
+    return {}
+  }
+  if (response.data && response.data.code === 401) {
+    notification.error({
+      message: '未认证',
+      description: 'Authorization verification failed'
+    })
+    
+    store.dispatch('Logout').then(() => {
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
+    })
+    return {}
+    
+  }
+
+  if (token == "") {
+    store.dispatch('Logout').then(() => {
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
+    })
+    return {}
+  }
+
+  if(response.data && response.data.code===404){
+    notification.error({
+      message: '无效请求',
+      description: '该请求地址不存在'
+    })
+    return {}
+  }
+  // console.log(response,'22')
   return response.data
 }, err)
 

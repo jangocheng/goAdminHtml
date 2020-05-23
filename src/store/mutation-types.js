@@ -1,4 +1,6 @@
 export const ACCESS_TOKEN = 'Access-Token'
+export const USER_NAME = 'user_name'
+export const USER_INFO = "user_info"
 export const SIDEBAR_TYPE = 'SIDEBAR_TYPE'
 export const DEFAULT_THEME = 'DEFAULT_THEME'
 export const DEFAULT_LAYOUT_MODE = 'DEFAULT_LAYOUT_MODE'

@@ -15,17 +15,29 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
 const defaultRoutePath = '/dashboard/workplace'
 
-constantRouterMap.concat(asyncRouterMap)
-router.addRoutes(asyncRouterMap)
-store.dispatch('GenerateRoutes', { constantRouterMap })
+// constantRouterMap.concat(asyncRouterMap)
+// router.addRoutes(asyncRouterMap)
+// store.dispatch('GenerateRoutes', { constantRouterMap })
 
 
 router.beforeEach((to, from, next) => {
-  NProgress.start() // start progress bar
-  to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`)
-  next()
-  NProgress.done()
-  console.log("next")
+  if(Vue.ls.get(ACCESS_TOKEN)){
+    // console.log("in")
+    NProgress.start() // start progress bar
+    to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`)
+    next()
+    NProgress.done()
+  }else{
+    // console.log("no token")
+    if (whiteList.includes(to.name)) {
+      // 在免登录白名单，直接进入
+      next()
+    } else {
+      next({ path: '/user/login'})
+      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+    }
+  }
+  // console.log("next")
   return
   if (!Vue.ls.get(ACCESS_TOKEN)) {
     /* has token */

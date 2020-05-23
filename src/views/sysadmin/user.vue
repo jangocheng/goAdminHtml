@@ -199,24 +199,19 @@ export default {
     queryUser () {
       this.queryLoading = true
       queryAdminUser(this.queryParam, { page: this.page.currend, limit: this.page.pageSize }).then(res => {
+        console.log(res,"sysadminuser")
         if (res.code == 200) {
           this.adminUser = res.result.data
           this.page.currend = res.result.page.page
           this.page.total = res.result.page.count
           this.page.pageSize = res.result.page.limit
-        } else {
-          // console.log(res)
-          Object.values(res.result).forEach(v => {
-            this.$message.error(v);
-          })
+        }else if(res.message){
+          this.$message.error(res.message)
         }
 
       }).catch(err => {
-        if (err.response) {
-          this.$message.error(err.response.data);
-        } else {
-          this.$message.error(err.message);
-        }
+        // console.log(err)
+        this.$message.error((err.response && err.response.data) ||err.message )
       }).finally(() => { this.queryLoading = false })
     },
 

@@ -1,13 +1,13 @@
 const api = {
-  Login: '/auth/login',
-  Logout: '/auth/logout',
+  Login: '/login',
+  Logout: '/logout',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',
   twoStepCode: '/auth/2step-code',
   SendSms: '/account/sms',
   SendSmsErr: '/account/sms_err',
   // get my info
-  UserInfo: '/user/info',
-  sysAdminUser: '/admin/user'
+  UserInfo: '/api/user/info',
+  sysAdminUser: '/api/admin/user'
 }
 export default api
