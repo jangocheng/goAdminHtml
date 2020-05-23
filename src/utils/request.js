@@ -52,6 +52,7 @@ service.interceptors.request.use(config => {
 
 // response interceptor 相应拦截器
 service.interceptors.response.use((response) => {
+  //所有预定义数据不会出异常，出异常则为非预定义数据即超出可控范围
   var token = response.headers["token"]
   if (token != undefined) {
     Vue.ls.set(ACCESS_TOKEN, token)
@@ -63,12 +64,13 @@ service.interceptors.response.use((response) => {
       message: '未授权',
       description: data.message
     })
-    return {}
+
+    return {code:403,result:{},message:""}
   }
   if (response.data && response.data.code === 401) {
     notification.error({
-      message: '未认证',
-      description: 'Authorization verification failed'
+      message: '认证失效',
+      description: '认证已失效，请重新登陆'
     })
     
     store.dispatch('Logout').then(() => {
@@ -76,25 +78,30 @@ service.interceptors.response.use((response) => {
         window.location.reload()
       }, 1500)
     })
-    return {}
+
+    return {code:401,result:{},message:""}
     
   }
 
   if (token == "") {
+    notification.error({
+      message: '认证失效',
+      description: '认证已失效，请重新登陆'
+    })
     store.dispatch('Logout').then(() => {
       setTimeout(() => {
         window.location.reload()
       }, 1500)
     })
-    return {}
+    return {code:401,result:{},message:""}
   }
 
   if(response.data && response.data.code===404){
     notification.error({
       message: '无效请求',
-      description: '该请求地址不存在'
+      description: response.config.url
     })
-    return {}
+    return {code:404,result:{},message:""}
   }
   // console.log(response,'22')
   return response.data
