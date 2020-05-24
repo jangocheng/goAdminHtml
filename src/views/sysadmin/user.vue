@@ -83,7 +83,8 @@
         </span>
 
         <span slot="action" slot-scope="text, record">
-          <template>
+
+          <template v-if='record.id!=userId'>
             <a @click="onEdit(record)">编辑</a>
             <a-divider type="vertical" />
             <a @click="onDelete(record)">删除</a>
@@ -92,6 +93,7 @@
             <a-divider type="vertical" />
             <a @click="onResetPassword(record)">重置密码</a>
           </template>
+
         </span>
 
       </a-table>
@@ -106,6 +108,7 @@ export default {
   data () {
     let self = this
     return {
+      userId: null,
       showSysUser: false,
       userLoading: false,
       loadPwd: false,
@@ -283,7 +286,7 @@ export default {
       this.$confirm({
         title: '确定重置 [ ' + recode.name + ' ] 的密码么？此操作不可恢复！',
         // content: h => <div style="color:red;">Some descriptions</div>,
-        onOk: ()=> {
+        onOk: () => {
           console.log("click")
           var self = this
           return postRestPassword(recode.id).then((res) => {
@@ -292,7 +295,7 @@ export default {
               this.$success({
                 title: '密码重置成功',
                 // JSX support
-                content: "新密码:"+res.result.data+"  注意:此密码只显示一次",
+                content: "新密码:" + res.result.data + "  注意:此密码只显示一次",
               });
             } else {
               this.$message(res.message || (res.result && res.result.data))
@@ -381,7 +384,14 @@ export default {
 
   },
   mounted () {
+    let userinfo = this.$store.getters.userInfo
+    console.log(userinfo)
+    if (userinfo) {
+      this.userId = userinfo.id
+    }
+    console.log(userinfo)
     this.queryUser()
+
   },
 
 }
