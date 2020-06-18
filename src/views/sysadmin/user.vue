@@ -42,6 +42,7 @@
           </a-form-item>
           <a-form-item label="状态">
             <a-switch checked-children="有效" un-checked-children="无效" default-checked v-model="sysUser.status" />
+    
           </a-form-item>
         </a-form>
       </a-spin>

@@ -12,6 +12,7 @@ const service = axios.create({
 })
 
 const err = (error) => {
+
   if (error.response) {
     const data = error.response.data
     const token = Vue.ls.get(ACCESS_TOKEN)
@@ -35,6 +36,7 @@ const err = (error) => {
       }
     }
   }
+  console.log(error)
   return Promise.reject(error)
 }
 
@@ -53,11 +55,14 @@ service.interceptors.request.use(config => {
 // response interceptor 相应拦截器
 service.interceptors.response.use((response) => {
   //所有预定义数据不会出异常，出异常则为非预定义数据即超出可控范围
+  //服务端发送out则退出 其余情况只要有则更换
+  //处理情况 401 403 404 超时
   var token = response.headers["token"]
-  if (token != undefined) {
+  if (token) {
     Vue.ls.set(ACCESS_TOKEN, token)
     store.commit('SET_TOKEN', token)
   }
+
   // const token = Vue.ls.get(ACCESS_TOKEN)
   if (response.data && response.data.code === 403) {
     notification.error({
@@ -83,18 +88,18 @@ service.interceptors.response.use((response) => {
     
   }
 
-  if (token == "") {
-    notification.error({
-      message: '认证失效',
-      description: '认证已失效，请重新登陆'
-    })
-    store.dispatch('Logout').then(() => {
-      setTimeout(() => {
-        window.location.reload()
-      }, 1500)
-    })
-    return {code:401,result:{},message:""}
-  }
+  // if (token == "") {
+  //   notification.error({
+  //     message: '认证失效',
+  //     description: '认证已失效，请重新登陆'
+  //   })
+  //   store.dispatch('Logout').then(() => {
+  //     setTimeout(() => {
+  //       window.location.reload()
+  //     }, 1500)
+  //   })
+  //   return {code:401,result:{},message:""}
+  // }
 
   if(response.data && response.data.code===404){
     notification.error({

@@ -19,6 +19,7 @@ const defaultRoutePath = '/dashboard/workplace'
 // router.addRoutes(asyncRouterMap)
 // store.dispatch('GenerateRoutes', { constantRouterMap })
 
+// Vue.ls.set(ACCESS_TOKEN,"123123")
 
 router.beforeEach((to, from, next) => {
   if(Vue.ls.get(ACCESS_TOKEN)){

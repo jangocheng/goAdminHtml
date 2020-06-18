@@ -23,6 +23,13 @@ export const asyncRouterMap = [
             name: 'adminuser',
             component: () => import('@/views/sysadmin/user'),
             meta: { title: '用户管理', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            path:"/sysadmin/account",
+            name:"account",
+            component:()=>import('@/views/sysadmin/account'),
+            meta:{title:'个人设置',keepAlive:false,permission:['dashboard']}
+
           }
         ]
       },

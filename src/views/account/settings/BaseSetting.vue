@@ -5,9 +5,9 @@
 
         <a-form layout="vertical">
           <a-form-item
-            label="昵称"
+            label="账号"
           >
-            <a-input placeholder="给自己起个名字" />
+            <a-input :value="" />
           </a-form-item>
           <a-form-item
             label="Bio"
@@ -51,7 +51,7 @@
         </a-form>
 
       </a-col>
-      <a-col :md="24" :lg="8" :style="{ minHeight: '180px' }">
+      <!-- <a-col :md="24" :lg="8" :style="{ minHeight: '180px' }">
         <div class="ant-upload-preview" @click="$refs.modal.edit(1)" >
           <a-icon type="cloud-upload-o" class="upload-icon"/>
           <div class="mask">
@@ -59,11 +59,11 @@
           </div>
           <img :src="option.img"/>
         </div>
-      </a-col>
+      </a-col> -->
 
     </a-row>
 
-    <avatar-modal ref="modal" @ok="setavatar"/>
+    <!-- <avatar-modal ref="modal" @ok="setavatar"/> -->
 
   </div>
 </template>
@@ -97,8 +97,11 @@ export default {
     }
   },
   methods: {
-    setavatar (url) {
-      this.option.img = url
+    // setavatar (url) {
+    //   this.option.img = url
+    // }
+    getUser(){
+      
     }
   }
 }
